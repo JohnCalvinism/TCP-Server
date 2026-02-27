@@ -2,12 +2,19 @@ CC = gcc
 CFLAGS = -g
 RM = rm -f
 
+SRC_FILES = $(wildcard *.c)
+OBJ_FILES = $(SRC_FILES:.c=.o)
+TARGET = server
+
 default: all
 
-all: TCP-Server
+all: $(TARGET)
 		
-TCP-Server: TCP-Server.c	
-	$(CC) $(CFLAGS) -o TCP-Server TCP-Server.c
+$(TARGET): $(OBJ_FILES)
+	$(CC) $(CFLAGS) -o $@ $^
+
+%.o: %.c	
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean: 
-	$(RM) 
+	$(RM) $(OBJ_FILES) $(TARGET) 
