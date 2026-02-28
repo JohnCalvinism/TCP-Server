@@ -4,7 +4,7 @@ RM = rm -f
 
 SRC_FILES = $(wildcard *.c)
 OBJ_FILES = $(SRC_FILES:.c=.o)
-TARGET = server
+TARGET = client
 
 default: all
 

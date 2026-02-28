@@ -8,25 +8,36 @@
 #include <unistd.h>
 #include <string.h>
 #include <unistd.h>
-#define MAX 80 
+#define MESSAGE_MAX 80 
 #define PORT 8080 
+#define NAME_LENGTH 12
+#define MAX_CLIENTS 5
 #define SA struct sockaddr 
 
 void chat(int connfd)
 {
-	char buff[MAX];
-	int n;
-	for (;;) {	               
-	       	bzero(buff, MAX);
-                read(connfd, buff, sizeof(buff));
-                printf("From client: %s\t To client: ", buff);
+	char username[NAME_LENGTH];
+	char message[MESSAGE_MAX];
+	int n = read(connfd, username, sizeof(username));
+	if (n>0){
+		username[n] = '\0';
+		printf("%s Connected.\n", username);
+	}
+	for (;;) {
+                n = read(connfd, message, sizeof(message));
+                printf("%s: %s \n", username, message);
+             	if (n > 0){
+			message[n] = '\0';
+		}else if (n == 0){
+			printf("%s disconnected", username);
+			break;
+		}else
+			printf("Read failed");
+                fgets(message, MESSAGE_MAX, stdin);
+		message[strcspn(message, "\n")] = '\0';
+                write(connfd, message, sizeof(message));
 
-               	bzero(buff, MAX);
-                n=0;
-                while ((buff[n++] = getchar()) != '\n');
-                write(connfd, buff, sizeof(buff));
-
-                if (strncmp("exit", buff, 4) == 0){
+                if (strncmp("exit", message, 4) == 0){
                         printf("Server Exit\n");
                         break;
                 }
